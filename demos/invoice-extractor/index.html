@@ -11,7 +11,7 @@
   </script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght,SOFT@9..144,400..700,0..100&family=Schibsted+Grotesk:wght@400..700&display=swap" rel="stylesheet">
   <style>
     :root { --bg: #fbfaf8; --card: #fff; --ink: #16130f; --muted: #6f6659; --line: #ebe5dc;
             --accent: #c2410c; --accent-soft: #fff1e8; --ok: #15803d; --ok-soft: #e3f4e8; --bad: #b91c1c; --bad-soft: #fde2e1; }
@@ -22,12 +22,13 @@
     :root[data-theme="dark"] { --bg: #12100d; --card: #1b1814; --ink: #f3eee7; --muted: #a59a8c; --line: #2c2620;
       --accent: #fb923c; --accent-soft: #2a1a0f; --ok: #4ade80; --ok-soft: #0f2a1a; --bad: #f87171; --bad-soft: #2d1414; }
     * { box-sizing: border-box; }
-    body { margin: 0; background: var(--bg); color: var(--ink); font: 15px/1.55 Inter, "Segoe UI", system-ui, sans-serif; }
+    body { margin: 0; background: var(--bg); color: var(--ink); font: 15.5px/1.55 "Schibsted Grotesk", "Segoe UI", system-ui, sans-serif; }
+    h1 { font-family: Fraunces, Georgia, serif; font-variation-settings: "SOFT" 100; font-weight: 600; }
     a { color: var(--accent); }
     .bar { background: var(--accent); color: #fff; font-size: 13px; padding: 7px 16px; text-align: center; }
     .bar a { color: inherit; font-weight: 700; margin-left: 10px; }
     .wrap { max-width: 1040px; margin: 0 auto; padding: 32px 16px 60px; }
-    h1 { font-size: clamp(26px, 5vw, 36px); letter-spacing: -.03em; margin: 0 0 8px; line-height: 1.15; }
+    h1 { font-size: clamp(28px, 5.4vw, 40px); letter-spacing: -.01em; margin: 0 0 8px; line-height: 1.15; }
     .lead { color: var(--muted); max-width: 640px; margin: 0 0 24px; font-size: 16px; }
     .drop { border: 2px dashed var(--line); border-radius: 18px; background: var(--card); padding: 32px 20px;
             text-align: center; transition: border-color .2s ease, background .2s ease; }

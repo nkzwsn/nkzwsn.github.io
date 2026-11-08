@@ -9,53 +9,61 @@
   <script>
     // Apply the saved theme before the page paints, so there is no flash.
     try { var t = localStorage.getItem('theme'); if (t) document.documentElement.dataset.theme = t; } catch (e) {}
+    document.documentElement.classList.add('js');
   </script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght,SOFT,WONK@0,9..144,400..700,0..100,0..1;1,9..144,400..700,0..100,0..1&family=Schibsted+Grotesk:ital,wght@0,400..700;1,400..700&display=swap" rel="stylesheet">
   <style>
     :root {
       --bg: #fbfaf8; --card: #ffffff; --ink: #16130f; --muted: #6f6659; --line: #ebe5dc;
-      --accent: #c2410c; --accent-soft: #fff1e8; --pill: #0b0b0c;
+      --accent: #c2410c; --accent-soft: #fff1e8; --pill: #0b0b0c; --live: #16a34a;
+      --spring: cubic-bezier(.34, 1.45, .64, 1); --smooth: cubic-bezier(.65, 0, .35, 1);
     }
     @media (prefers-color-scheme: dark) {
       :root:not([data-theme="light"]) {
         --bg: #12100d; --card: #1b1814; --ink: #f3eee7; --muted: #a59a8c; --line: #2c2620;
-        --accent: #fb923c; --accent-soft: #2a1a0f;
+        --accent: #fb923c; --accent-soft: #2a1a0f; --live: #4ade80;
       }
     }
     :root[data-theme="dark"] {
       --bg: #12100d; --card: #1b1814; --ink: #f3eee7; --muted: #a59a8c; --line: #2c2620;
-      --accent: #fb923c; --accent-soft: #2a1a0f;
+      --accent: #fb923c; --accent-soft: #2a1a0f; --live: #4ade80;
     }
     * { box-sizing: border-box; }
     html { scroll-behavior: smooth; }
     body { margin: 0; background: var(--bg); color: var(--ink);
-           font: 16px/1.6 Inter, "Segoe UI", system-ui, sans-serif; }
+           font: 16.5px/1.6 "Schibsted Grotesk", "Segoe UI", system-ui, sans-serif; overflow-x: hidden; }
+    h1, h2, h3, .stats b, .steps > div::before { font-family: Fraunces, Georgia, serif; font-optical-sizing: auto;
+                   font-variation-settings: "SOFT" 100, "WONK" 0; }
+    em.wonk { font-style: italic; font-variation-settings: "SOFT" 100, "WONK" 1; }
     a { color: var(--accent); }
     .wrap { max-width: 1040px; margin: 0 auto; padding: 0 16px; }
+
+    /* ---------- header + logo ---------- */
     nav.top { display: flex; justify-content: space-between; align-items: center; padding: 18px 0; }
     .wordmark { color: var(--ink); display: block; line-height: 0; }
     .wordmark svg { height: 22px; width: auto; display: block; }
     /* Logo draws itself like a pen, letter by letter */
     .wordmark path { stroke-dasharray: 1 1.02; stroke-dashoffset: 1.01;
-                     animation: draw .62s cubic-bezier(.65, 0, .35, 1) both; }
+                     animation: draw .62s var(--smooth) both; }
     .wordmark path:nth-child(2) { animation-delay: .09s; } .wordmark path:nth-child(3) { animation-delay: .18s; }
     .wordmark path:nth-child(4) { animation-delay: .27s; } .wordmark path:nth-child(5) { animation-delay: .36s; }
     .wordmark path:nth-child(6) { animation-delay: .45s; }
     @keyframes draw { 0% { stroke-dashoffset: 1.01; opacity: 0; } 1% { opacity: 1; } 100% { stroke-dashoffset: 0; opacity: 1; } }
-    @media (prefers-reduced-motion: reduce) { .wordmark path { animation: none; stroke-dashoffset: 0; } }
-    nav.top div { display: flex; gap: 18px; font-size: 14px; }
-    nav.top div a { color: var(--muted); text-decoration: none; }
+    nav.top div { display: flex; gap: 18px; font-size: 14px; align-items: center; }
+    nav.top div a { color: var(--muted); text-decoration: none; position: relative; }
     nav.top div a:hover { color: var(--ink); }
-    nav.top div { align-items: center; }
+    nav.top div a::after { content: ""; position: absolute; left: 0; right: 0; bottom: -3px; height: 2px; border-radius: 2px;
+                           background: var(--accent); transform: scaleX(0); transform-origin: right; transition: transform .3s var(--smooth); }
+    nav.top div a:hover::after { transform: scaleX(1); transform-origin: left; }
     .theme-btn { position: relative; width: 36px; height: 36px; border-radius: 10px; border: 1px solid var(--line);
                  background: var(--card); color: var(--ink); cursor: pointer; padding: 0; overflow: hidden;
                  transition: border-color .2s ease, transform .2s ease; }
-    .theme-btn:hover { border-color: var(--muted); }
+    .theme-btn:hover { border-color: var(--muted); transform: rotate(-8deg); }
     .theme-btn:active { transform: scale(.92); }
     .theme-btn svg { position: absolute; inset: 0; margin: auto; width: 18px; height: 18px;
-                     transition: transform .5s cubic-bezier(.34, 1.4, .64, 1), opacity .3s ease; }
+                     transition: transform .5s var(--spring), opacity .3s ease; }
     .theme-btn .sun { opacity: 0; transform: rotate(-90deg) scale(.4); }
     :root[data-theme="dark"] .theme-btn .sun { opacity: 1; transform: none; }
     :root[data-theme="dark"] .theme-btn .moon { opacity: 0; transform: rotate(90deg) scale(.4); }
@@ -67,95 +75,180 @@
     ::view-transition-old(root), ::view-transition-new(root) { animation: none; mix-blend-mode: normal; }
     html.theming *, html.theming *::before, html.theming *::after {
       transition: background-color .4s ease, color .4s ease, border-color .4s ease, box-shadow .4s ease !important; }
-    @media (prefers-reduced-motion: reduce) {
-      .theme-btn svg { transition: opacity .2s ease; }
-      html.theming *, html.theming *::before, html.theming *::after { transition: none !important; }
-    }
 
+    /* ---------- entrance + scroll reveal ---------- */
+    @keyframes rise { from { opacity: 0; translate: 0 18px; } to { opacity: 1; translate: 0 0; } }
+    .hero > * { animation: rise .7s cubic-bezier(.2, .8, .2, 1) both; }
+    .hero > :nth-child(2) { animation-delay: .08s; } .hero > :nth-child(3) { animation-delay: .16s; }
+    .hero > :nth-child(4) { animation-delay: .24s; }
+    html.js [data-reveal] { opacity: 0; }
+    html.js [data-reveal].in { animation: rise .7s cubic-bezier(.2, .8, .2, 1) both; animation-delay: var(--d, 0s); }
+
+    /* ---------- hand-drawn marks ---------- */
+    .scribble { position: relative; white-space: nowrap; }
+    .scribble svg { position: absolute; left: -3%; width: 106%; bottom: -.16em; height: .42em; overflow: visible; pointer-events: none; }
+    .scribble.ring svg { left: -7%; width: 114%; top: -.28em; bottom: auto; height: 1.55em; }
+    .scribble path { fill: none; stroke: var(--accent); stroke-width: 3.2; stroke-linecap: round; stroke-linejoin: round;
+                     stroke-dasharray: 1 1.02; stroke-dashoffset: 1.01; }
+    .scribble path + path { stroke-width: 2.2; opacity: .55; }
+    .hero .scribble path { animation: draw .8s var(--smooth) .85s both; }
+    .hero .scribble path + path { animation-delay: 1.35s; animation-duration: .5s; }
+    .in .scribble path { animation: draw .9s var(--smooth) .35s both; }
+
+    /* ---------- hero ---------- */
     .hero { padding: 64px 0 56px; }
-    .hero .tag { display: inline-block; background: var(--accent-soft); color: var(--accent);
-                 font-size: 13px; font-weight: 600; padding: 4px 12px; border-radius: 99px; }
-    .hero h1 { font-size: clamp(32px, 6vw, 54px); line-height: 1.08; letter-spacing: -.035em;
+    .hero .tag { display: inline-flex; align-items: center; gap: 8px; background: var(--accent-soft); color: var(--accent);
+                 font-size: 13px; font-weight: 600; padding: 4px 12px 4px 10px; border-radius: 99px; }
+    .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--live); position: relative; flex: none; }
+    .dot::after { content: ""; position: absolute; inset: 0; border-radius: 50%; background: var(--live);
+                  animation: ping 2s cubic-bezier(0, 0, .2, 1) infinite; }
+    @keyframes ping { 0% { transform: scale(1); opacity: .7; } 80%, 100% { transform: scale(2.6); opacity: 0; } }
+    .hero h1 { font-size: clamp(34px, 6.4vw, 60px); line-height: 1.08; letter-spacing: -.02em; font-weight: 600;
                margin: 18px 0 18px; max-width: 820px; }
     .hero p { font-size: 18px; color: var(--muted); max-width: 640px; margin: 0 0 28px; }
     .cta { display: flex; gap: 10px; flex-wrap: wrap; }
-    .btn { display: inline-block; padding: 11px 20px; border-radius: 11px; font-weight: 600;
-           text-decoration: none; border: 1px solid var(--line); color: var(--ink); background: var(--card); }
+    .btn { display: inline-flex; align-items: center; gap: 8px; padding: 11px 20px; border-radius: 11px; font-weight: 600;
+           text-decoration: none; border: 1px solid var(--line); color: var(--ink); background: var(--card);
+           transition: transform .3s var(--spring), box-shadow .3s ease; }
+    .btn:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(0, 0, 0, .08); }
+    .btn:active { transform: scale(.96); transition-duration: .1s; }
     .btn.primary { background: var(--ink); color: var(--bg); border-color: var(--ink); }
+    .btn .arr { display: inline-block; transition: transform .3s var(--spring); }
+    .btn:hover .arr { transform: translateX(4px); }
 
     section { padding: 40px 0; }
-    h2 { font-size: 28px; letter-spacing: -.02em; margin: 0 0 6px; }
+    h2 { font-size: 32px; letter-spacing: -.01em; margin: 0 0 6px; font-weight: 600; }
     .sub { color: var(--muted); margin: 0 0 28px; }
 
+    /* ---------- Mini Island feature ---------- */
     .featured { display: grid; grid-template-columns: 1.1fr 1fr; gap: 0; background: var(--card);
                 border: 1px solid var(--line); border-radius: 20px; overflow: hidden; margin-bottom: 20px; }
     .featured .stage { background: radial-gradient(120% 90% at 50% 0%, #3b2a5e 0%, #161320 55%, #0d0c12 100%);
                        display: flex; flex-direction: column; align-items: center; justify-content: center;
-                       gap: 18px; padding: 48px 20px; min-height: 320px; }
-    .island { background: var(--pill); color: #fff; border-radius: 999px; display: flex; align-items: center;
-              gap: 12px; padding: 8px 18px 8px 8px; box-shadow: 0 0 40px rgba(236, 114, 160, .35);
-              max-width: 100%; }
-    .island .cover { width: 34px; height: 34px; border-radius: 50%; flex: none;
-                     background: conic-gradient(from 200deg, #f472b6, #fb923c, #a78bfa, #f472b6); }
-    .island .t { font-size: 13px; line-height: 1.25; min-width: 0; }
-    .island .t b { display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-    .island .t span { color: #f9a8d4; }
-    .island .t span i { color: #8b8794; font-style: normal; }
+                       gap: 0; padding: 56px 16px 52px; min-height: 340px; position: relative; }
+    .stage .screen-top { position: absolute; top: 18px; left: 18%; right: 18%; height: 3px; border-radius: 3px;
+                         background: rgba(255, 255, 255, .12); }
+    .island { --glow: rgba(236, 114, 160, .45); position: relative; width: 290px; height: 50px; max-width: 100%;
+              border-radius: 999px; background: var(--pill); color: #fff; border: 0; padding: 0; font: inherit;
+              cursor: pointer; overflow: hidden; box-shadow: 0 0 44px var(--glow), 0 0 0 1px rgba(255, 255, 255, .06);
+              transition: width .6s var(--spring), height .6s var(--spring), box-shadow .6s ease; }
+    .island:active { scale: .97; }
+    .island:focus-visible { outline: 2px solid #fff; outline-offset: 3px; }
+    .state { position: absolute; left: 0; top: 0; width: max-content; display: flex; align-items: center; gap: 12px;
+             padding: 8px 18px 8px 8px; white-space: nowrap; text-align: left; opacity: 0; transform: scale(.85);
+             filter: blur(6px); transition: opacity .3s ease, transform .5s var(--spring), filter .3s ease; pointer-events: none; }
+    .state.on { opacity: 1; transform: none; filter: none; transition-delay: .1s; }
+    .state.small { padding: 7px 16px 7px 12px; gap: 10px; }
+    .cover { width: 34px; height: 34px; border-radius: 50%; flex: none;
+             background: conic-gradient(from 200deg, #f472b6, #fb923c, #a78bfa, #f472b6); }
+    .on .cover.spin { animation: spin 6s linear infinite; }
+    @keyframes spin { to { transform: rotate(1turn); } }
+    .cover.d { background: #5865f2; display: grid; place-items: center; font-size: 15px; font-weight: 700; }
+    .state .t { font-size: 13px; line-height: 1.25; }
+    .state .t b { display: block; }
+    .karaoke { background: linear-gradient(90deg, #f9a8d4 50%, #6b6577 50%) 100% 0 / 200% 100%;
+               -webkit-background-clip: text; background-clip: text; color: transparent; }
+    .on .karaoke { animation: sweep 2.6s linear .3s both; }
+    @keyframes sweep { to { background-position: 0 0; } }
     .eq { display: flex; gap: 3px; align-items: flex-end; height: 16px; flex: none; }
-    .eq u { width: 3px; background: #f472b6; border-radius: 2px; animation: eq 1s infinite ease-in-out; }
+    .eq u { width: 3px; height: 4px; background: #f472b6; border-radius: 2px; }
+    .on .eq u { animation: eq 1s infinite ease-in-out; }
     .eq u:nth-child(2) { animation-delay: -.3s; } .eq u:nth-child(3) { animation-delay: -.6s; }
     @keyframes eq { 0%, 100% { height: 4px; } 50% { height: 16px; } }
-    @media (prefers-reduced-motion: reduce) { .eq u { animation: none; height: 10px; } }
-    .island.note { padding: 8px 16px 8px 8px; box-shadow: 0 0 30px rgba(88, 101, 242, .35); }
-    .island.note .cover { background: #5865f2; display: grid; place-items: center; font-size: 15px; font-weight: 700; }
-    .stage small { color: #8b8794; font-size: 12px; }
+    .state svg { width: 18px; height: 18px; flex: none; }
+    .level { width: 120px; height: 6px; border-radius: 6px; background: rgba(255, 255, 255, .15); overflow: hidden; }
+    .level i { display: block; height: 100%; width: 64%; border-radius: inherit; background: #fff; transform-origin: left; }
+    .on .level i { animation: level 1.4s var(--spring) .15s both; }
+    @keyframes level { 0% { transform: scaleX(.35); } 55% { transform: scaleX(1.12); } 100% { transform: scaleX(1); } }
+    .num { font-size: 13px; font-weight: 600; font-variant-numeric: tabular-nums; min-width: 22px; }
+    .charge { color: #4ade80; font-size: 13px; font-weight: 600; }
+    .on .bolt { animation: blink 1.2s ease-in-out infinite; }
+    @keyframes blink { 50% { opacity: .35; } }
+    .ring circle + circle { stroke-dasharray: 1; stroke-dashoffset: .25; }
+    .on .ring circle + circle { animation: ring 3s linear both; }
+    @keyframes ring { from { stroke-dashoffset: 0; } to { stroke-dashoffset: .3; } }
+    .stage small { color: #8b8794; font-size: 12px; position: absolute; left: 16px; right: 16px; bottom: 16px; text-align: center; }
+    .dots { display: flex; gap: 6px; margin-top: 16px; }
+    .dots i { width: 6px; height: 6px; border-radius: 3px; background: rgba(255, 255, 255, .22); transition: width .4s var(--spring), background .3s; }
+    .dots i.on { width: 18px; background: rgba(255, 255, 255, .8); }
     .featured .info { padding: 32px; }
-    .featured h3 { font-size: 24px; margin: 0 0 4px; letter-spacing: -.02em; }
+    .featured h3 { font-size: 27px; margin: 0 0 4px; letter-spacing: -.01em; font-weight: 600; }
     .chips { display: flex; flex-wrap: wrap; gap: 6px; margin: 12px 0 16px; }
     .chips span { font-size: 12px; font-weight: 600; padding: 3px 10px; border-radius: 99px;
-                  background: var(--bg); border: 1px solid var(--line); color: var(--muted); }
+                  background: var(--bg); border: 1px solid var(--line); color: var(--muted);
+                  transition: transform .35s var(--spring), color .2s, border-color .2s; }
+    .chips span:hover { transform: rotate(-4deg) scale(1.08); color: var(--accent); border-color: var(--accent); }
+    .chips span:nth-child(even):hover { transform: rotate(4deg) scale(1.08); }
     .featured ul { padding-left: 18px; margin: 0 0 18px; }
     .featured li { margin-bottom: 6px; }
     .stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; border-top: 1px solid var(--line); padding-top: 16px; margin-bottom: 16px; }
-    .stats div b { display: block; font-size: 22px; letter-spacing: -.02em; }
+    .stats div b { display: block; font-size: 26px; font-weight: 600; font-variant-numeric: lining-nums tabular-nums; }
     .stats div span { font-size: 13px; color: var(--muted); }
 
+    /* ---------- project cards ---------- */
     .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; }
     .card { background: var(--card); border: 1px solid var(--line); border-radius: 18px; overflow: hidden;
             display: flex; flex-direction: column; }
     .card img { width: 100%; aspect-ratio: 16 / 10; object-fit: cover; object-position: top;
-                border-bottom: 1px solid var(--line); display: block; }
+                border-bottom: 1px solid var(--line); display: block; transition: transform .6s var(--smooth); }
     .card .terminal { aspect-ratio: 16 / 10; background: #0f1115; color: #d1d5db; padding: 18px;
                       font: 12px/1.6 Consolas, "Cascadia Mono", monospace; overflow: hidden; white-space: pre; }
     .terminal .ok { color: #4ade80; } .terminal .rv { color: #f87171; } .terminal .dim { color: #6b7280; }
-    .card .body { padding: 20px 22px 22px; flex: 1; display: flex; flex-direction: column; }
-    .card h3 { margin: 0 0 4px; font-size: 19px; }
+    .terminal .cur { display: inline-block; width: 7px; height: 13px; background: #d1d5db; vertical-align: -2px;
+                     animation: caret 1s steps(1) infinite; }
+    @keyframes caret { 50% { opacity: 0; } }
+    .card .body { padding: 20px 22px 22px; flex: 1; display: flex; flex-direction: column; background: var(--card); position: relative; }
+    .card h3 { margin: 0 0 4px; font-size: 22px; font-weight: 600; }
     .card p { margin: 0 0 12px; color: var(--muted); font-size: 15px; }
     .card .chips { margin: 0 0 14px; }
     .card .links { margin-top: auto; font-size: 14px; font-weight: 600; }
     a.card.live { color: inherit; text-decoration: none;
-                  transition: transform .25s cubic-bezier(.2, .8, .2, 1), box-shadow .25s ease, border-color .25s ease; }
-    a.card.live:hover, a.card.live:focus-visible { transform: translateY(-4px); border-color: var(--accent);
-                  box-shadow: 0 14px 34px rgba(0, 0, 0, .12); outline: none; }
+                  transition: transform .45s var(--spring), box-shadow .3s ease, border-color .3s ease; }
+    a.card.live:hover, a.card.live:focus-visible { transform: translateY(-6px) rotate(-.8deg); border-color: var(--accent);
+                  box-shadow: 0 18px 40px rgba(0, 0, 0, .14); outline: none; }
+    .grid > :nth-child(2):hover { transform: translateY(-6px) rotate(.8deg); }
+    a.card.live:hover img { transform: scale(1.04); }
     .card .try { color: var(--accent); }
-    .card .try span { display: inline-block; transition: transform .25s ease; }
-    a.card.live:hover .try span { transform: translateX(4px); }
-    @media (prefers-reduced-motion: reduce) { a.card.live, .card .try span { transition: none; } a.card.live:hover { transform: none; } }
+    .card .try span { display: inline-block; transition: transform .3s var(--spring); }
+    a.card.live:hover .try span { transform: translateX(5px); }
 
+    /* ---------- services with doodles ---------- */
     .services { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; }
-    .svc { border: 1px solid var(--line); border-radius: 16px; padding: 20px; background: var(--card); }
+    .svc { border: 1px solid var(--line); border-radius: 16px; padding: 20px; background: var(--card);
+           transition: transform .45s var(--spring), border-color .3s; }
+    .svc:hover { transform: translateY(-4px); border-color: var(--accent); }
     .svc b { display: block; margin-bottom: 6px; }
     .svc p { margin: 0; color: var(--muted); font-size: 15px; }
+    .doodle { width: 34px; height: 34px; color: var(--accent); margin-bottom: 12px; display: block; overflow: visible; }
+    .doodle * { fill: none; stroke: currentColor; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
+    .doodle .f { fill: currentColor; stroke: none; }
+    .doodle g, .doodle path, .doodle circle { transform-box: fill-box; transform-origin: center; }
+    .svc:hover .spin-me { transform: rotate(180deg); transition: transform .8s var(--spring); }
+    .spin-me { transition: transform .6s var(--smooth); transform-box: view-box !important; }
+    .bar { transform-origin: bottom !important; }
+    .svc:hover .bar { animation: grow .7s var(--spring) both; }
+    .svc:hover .bar:nth-of-type(2) { animation-delay: .08s; } .svc:hover .bar:nth-of-type(3) { animation-delay: .16s; }
+    @keyframes grow { 0% { transform: scaleY(.3); } 100% { transform: scaleY(1); } }
+    .svc:hover .typing { animation: hop .9s ease-in-out infinite; }
+    .typing:nth-of-type(2) { animation-delay: .15s !important; } .typing:nth-of-type(3) { animation-delay: .3s !important; }
+    @keyframes hop { 0%, 60%, 100% { transform: translateY(0); } 30% { transform: translateY(-2.5px); } }
+    .svc:hover .wiggle { animation: wiggle .7s ease-in-out; transform-box: view-box !important; }
+    @keyframes wiggle { 0%, 100% { rotate: 0deg; } 25% { rotate: -18deg; } 60% { rotate: 12deg; } 85% { rotate: -4deg; } }
 
+    /* ---------- steps ---------- */
     .steps { counter-reset: s; display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; }
-    .steps div { counter-increment: s; padding-top: 8px; }
-    .steps div::before { content: counter(s); display: inline-grid; place-items: center; width: 28px; height: 28px;
+    .steps > div { counter-increment: s; padding-top: 8px; }
+    .steps > div::before { content: counter(s); display: inline-grid; place-items: center; width: 30px; height: 30px;
                          border-radius: 50%; background: var(--accent-soft); color: var(--accent);
                          font-weight: 700; font-size: 14px; margin-bottom: 8px; }
+    html.js .steps > div::before { transform: scale(0); }
+    .steps > div.in::before { animation: pop .6s var(--spring) both; animation-delay: calc(var(--d, 0s) + .15s); }
+    @keyframes pop { from { transform: scale(0) rotate(-30deg); } to { transform: scale(1) rotate(0); } }
     .steps b { display: block; }
     .steps p { margin: 4px 0 0; color: var(--muted); font-size: 15px; }
 
-    .contact { background: var(--ink); color: var(--bg); border-radius: 22px; padding: 44px 32px; text-align: center; margin: 40px 0 60px; }
+    /* ---------- contact ---------- */
+    .contact { background: var(--ink); color: var(--bg); border-radius: 22px; padding: 48px 32px; text-align: center; margin: 40px 0 60px; }
     .contact h2 { color: var(--bg); }
     .contact p { color: color-mix(in srgb, var(--bg) 70%, transparent); max-width: 520px; margin: 0 auto 22px; }
     .contact .btn { background: var(--bg); color: var(--ink); border-color: var(--bg); }
@@ -166,6 +259,14 @@
       .featured .info { padding: 24px 20px; }
       nav.top div a:not([href="#contact"]) { display: none; }
       .hero { padding: 40px 0 32px; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { animation-duration: .01ms !important; animation-delay: 0s !important;
+                               animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
+      .wordmark path, .scribble path { stroke-dashoffset: 0; }
+      .dot::after { display: none; }
+      html.js [data-reveal] { opacity: 1; }
+      html.js .steps > div::before { transform: none; }
     }
   </style>
 </head>
@@ -183,32 +284,49 @@
   </nav>
 
   <header class="hero">
-    <span class="tag">Available for freelance projects</span>
-    <h1>I build automations and small tools that give businesses their hours back.</h1>
+    <span class="tag"><i class="dot" aria-hidden="true"></i>Available for freelance projects</span>
+    <h1>I build automations and small tools that give businesses their
+      <span class="scribble"><em class="wonk">hours back.</em><svg viewBox="0 0 200 14" preserveAspectRatio="none" aria-hidden="true"><path pathLength="1" vector-effect="non-scaling-stroke" d="M3 9.5C38 5 72 11.5 108 7.8 140 4.6 170 6.4 197 8.6"/><path pathLength="1" vector-effect="non-scaling-stroke" d="M26 13C70 10.2 118 11.6 168 11"/></svg></span></h1>
     <p>Spreadsheets that fill themselves, order and invoice workflows, Windows apps, bots and AI
        features, built fast and handed over with clear docs. Based in Indonesia, working with clients anywhere.</p>
     <div class="cta">
-      <a class="btn primary" href="#contact">Start a project</a>
+      <a class="btn primary" href="#contact">Start a project <span class="arr" aria-hidden="true">&rarr;</span></a>
       <a class="btn" href="#work">See my work</a>
     </div>
   </header>
 
   <section id="work">
-    <h2>Work</h2>
-    <p class="sub">A shipped product with real users, plus live demos of the kind of work I do for clients. Click one to try it.</p>
+    <h2 data-reveal>Work</h2>
+    <p class="sub" data-reveal style="--d:.06s">A shipped product with real users, plus live demos of the kind of work I do for clients. Click one to try it.</p>
 
-    <article class="featured">
-      <div class="stage" aria-label="Illustration of the Mini Island pill">
-        <div class="island">
-          <div class="cover"></div>
-          <div class="t"><b>Mini Island</b><span>yume no naka e <i>(夢の中へ)</i></span></div>
-          <div class="eq"><u></u><u></u><u></u></div>
-        </div>
-        <div class="island note">
-          <div class="cover">D</div>
-          <div class="t"><b>Discord</b><span style="color:#c7c9ff">Raka: meeting moved to 3 pm</span></div>
-        </div>
-        <small>Illustration: now playing with synced lyrics, and a notification</small>
+    <article class="featured" data-reveal style="--d:.1s">
+      <div class="stage">
+        <div class="screen-top" aria-hidden="true"></div>
+        <button class="island" id="island" type="button" aria-label="Mini Island illustration: click to see the next thing it shows">
+          <span class="state on" data-glow="rgba(236, 114, 160, .45)">
+            <span class="cover spin"></span>
+            <span class="t"><b>Mini Island</b><span class="karaoke">yume no naka e</span></span>
+            <span class="eq"><u></u><u></u><u></u></span>
+          </span>
+          <span class="state" data-glow="rgba(88, 101, 242, .5)">
+            <span class="cover d">D</span>
+            <span class="t"><b>Discord</b><span style="color:#c7c9ff">Raka: meeting moved to 3 pm</span></span>
+          </span>
+          <span class="state small" data-glow="rgba(255, 255, 255, .22)">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z"/><path d="M15.5 9a4 4 0 0 1 0 6M18.5 6.5a7.5 7.5 0 0 1 0 11"/></svg>
+            <span class="level"><i></i></span><span class="num">64</span>
+          </span>
+          <span class="state small" data-glow="rgba(74, 222, 128, .4)">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#4ade80" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2.5" y="7" width="17" height="10" rx="3"/><path d="M22 10.5v3"/><path class="bolt" d="M11.5 8.5l-2.5 4h3.5l-2.5 3.5" /></svg>
+            <span class="charge">Charging</span><span class="num">82%</span>
+          </span>
+          <span class="state small" data-glow="rgba(251, 146, 60, .4)">
+            <svg class="ring" viewBox="0 0 24 24" fill="none" stroke-width="2.4"><circle cx="12" cy="12" r="9" stroke="rgba(255,255,255,.18)"/><circle cx="12" cy="12" r="9" stroke="#fb923c" stroke-linecap="round" pathLength="1" transform="rotate(-90 12 12)"/></svg>
+            <span class="num">04:59</span><span class="charge" style="color:#fdba74">Timer</span>
+          </span>
+        </button>
+        <div class="dots" aria-hidden="true"><i class="on"></i><i></i><i></i><i></i><i></i></div>
+        <small>Click the island. An illustration of what Mini Island shows.</small>
       </div>
       <div class="info">
         <h3>Mini Island for Windows</h3>
@@ -222,16 +340,16 @@
           <li>English and Indonesian interface, multi-monitor, steps aside for fullscreen games</li>
         </ul>
         <div class="stats">
-          <div><b>&lt;1%</b><span>CPU when idle</span></div>
-          <div><b>45 MB</b><span>memory (down from 130)</span></div>
-          <div><b>0</b><span>dependencies to install</span></div>
+          <div><b data-count="1" data-prefix="&lt;" data-suffix="%">&lt;1%</b><span>CPU when idle</span></div>
+          <div><b data-count="45" data-suffix=" MB">45 MB</b><span>memory (down from 130)</span></div>
+          <div><b data-count="0">0</b><span>dependencies to install</span></div>
         </div>
         <a href="https://github.com/nkzwsn/mini-island-windows">View on GitHub</a>
       </div>
     </article>
 
     <div class="grid">
-      <a class="card live" href="demos/order-desk/" aria-label="Order Desk: try the live demo">
+      <a class="card live" href="demos/order-desk/" aria-label="Order Desk: try the live demo" data-reveal>
         <img src="img/order-desk-dashboard.jpg" alt="Order Desk dashboard with revenue chart and order board" loading="lazy">
         <div class="body">
           <h3>Order Desk</h3>
@@ -242,7 +360,7 @@
         </div>
       </a>
 
-      <a class="card live" href="demos/invoice-extractor/" aria-label="Invoice Extractor: try the live demo">
+      <a class="card live" href="demos/invoice-extractor/" aria-label="Invoice Extractor: try the live demo" data-reveal style="--d:.08s">
 <div class="terminal"><span class="dim">&gt; python extract.py invoices/</span>
 <span class="ok">[ok    ]</span> acme-cloud-oct.pdf   total=83.00
 <span class="ok">[ok    ]</span> cahaya-printing.pdf  total=1.221.000
@@ -251,7 +369,8 @@
          <span class="rv">- subtotal + tax = 1.722.000,</span>
          <span class="rv">  but total says 2.000.000</span>
 
-4 invoices -&gt; invoices.xlsx  (1 needs review)</div>
+4 invoices -&gt; invoices.xlsx  (1 needs review)
+<span class="dim">&gt;</span> <span class="cur"></span></div>
         <div class="body">
           <h3>Invoice Extractor</h3>
           <p>Turns a folder of supplier invoices into one Excel file and catches math errors,
@@ -261,7 +380,7 @@
         </div>
       </a>
 
-      <article class="card">
+      <article class="card" data-reveal style="--d:.16s">
 <div class="terminal"><span class="dim">#loker-baru</span>
 
 <span class="ok">Hitagi</span>  <span class="dim">BOT  today at 09:00</span>
@@ -282,34 +401,42 @@ Yogyakarta . SMA/SMK . deadline 20 Nov
   </section>
 
   <section id="services">
-    <h2>What I can build for you</h2>
-    <p class="sub">Fixed price per project, agreed before I start.</p>
+    <h2 data-reveal>What I can build for you</h2>
+    <p class="sub" data-reveal style="--d:.06s">Fixed price per project, agreed before I start.</p>
     <div class="services">
-      <div class="svc"><b>Business automation</b><p>Orders, invoices, reports and reminders that run by themselves across Sheets, email and WhatsApp.</p></div>
-      <div class="svc"><b>Internal tools</b><p>Dashboards, trackers and admin panels to replace the spreadsheet everyone is afraid to touch.</p></div>
-      <div class="svc"><b>AI features</b><p>Reading documents, sorting messages, answering questions from your own data, added to the tools you already use.</p></div>
-      <div class="svc"><b>Fix and finish</b><p>Taking over a half-done or broken project, finding what's wrong and getting it shipped.</p></div>
+      <div class="svc" data-reveal>
+        <svg class="doodle" viewBox="0 0 32 32" aria-hidden="true"><g class="spin-me"><path d="M7 13.5a9.5 9.5 0 0 1 16.6-4.6"/><path d="M24.2 4.2v5.2H19"/><path d="M25 18.5a9.5 9.5 0 0 1-16.6 4.6"/><path d="M7.8 27.8v-5.2H13"/></g></svg>
+        <b>Business automation</b><p>Orders, invoices, reports and reminders that run by themselves across Sheets, email and WhatsApp.</p></div>
+      <div class="svc" data-reveal style="--d:.07s">
+        <svg class="doodle" viewBox="0 0 32 32" aria-hidden="true"><path d="M4.5 27h23"/><path class="bar" d="M9 23v-6"/><path class="bar" d="M16 23V8"/><path class="bar" d="M23 23V13"/></svg>
+        <b>Internal tools</b><p>Dashboards, trackers and admin panels to replace the spreadsheet everyone is afraid to touch.</p></div>
+      <div class="svc" data-reveal style="--d:.14s">
+        <svg class="doodle" viewBox="0 0 32 32" aria-hidden="true"><path d="M5 9.5A4.5 4.5 0 0 1 9.5 5h13A4.5 4.5 0 0 1 27 9.5v7.5a4.5 4.5 0 0 1-4.5 4.5H15l-6 5v-5h.5A4.5 4.5 0 0 1 5 17z"/><circle class="f typing" cx="11" cy="13.3" r="1.6"/><circle class="f typing" cx="16" cy="13.3" r="1.6"/><circle class="f typing" cx="21" cy="13.3" r="1.6"/></svg>
+        <b>AI features</b><p>Reading documents, sorting messages, answering questions from your own data, added to the tools you already use.</p></div>
+      <div class="svc" data-reveal style="--d:.21s">
+        <svg class="doodle" viewBox="0 0 32 32" aria-hidden="true"><g class="wiggle" style="transform-origin: 9px 23px"><path d="M21 5.5a6 6 0 0 0-7.4 7.8L5.8 21a2.4 2.4 0 0 0 3.4 3.4l7.7-7.8A6 6 0 0 0 24.7 9l-3.6 3.5-3.2-.6-.6-3.2z"/></g></svg>
+        <b>Fix and finish</b><p>Taking over a half-done or broken project, finding what's wrong and getting it shipped.</p></div>
     </div>
   </section>
 
   <section>
-    <h2>How it works</h2>
-    <p class="sub">Short, clear, no surprises.</p>
+    <h2 data-reveal>How it works</h2>
+    <p class="sub" data-reveal style="--d:.06s">Short, clear, no surprises.</p>
     <div class="steps">
-      <div><b>Quick call or chat</b><p>You show me the task that eats your time. I tell you honestly if it's worth automating.</p></div>
-      <div><b>Fixed quote</b><p>One price, one scope, one delivery date.</p></div>
-      <div><b>Working demo early</b><p>You see it running within days and can change direction before it's finished.</p></div>
-      <div><b>Handover</b><p>Code, setup guide and a short video, so it keeps running after I'm done.</p></div>
+      <div data-reveal><b>Quick call or chat</b><p>You show me the task that eats your time. I tell you honestly if it's worth automating.</p></div>
+      <div data-reveal style="--d:.08s"><b>Fixed quote</b><p>One price, one scope, one delivery date.</p></div>
+      <div data-reveal style="--d:.16s"><b>Working demo early</b><p>You see it running within days and can change direction before it's finished.</p></div>
+      <div data-reveal style="--d:.24s"><b>Handover</b><p>Code, setup guide and a short video, so it keeps running after I'm done.</p></div>
     </div>
   </section>
 
-  <section id="contact" class="contact">
-    <h2>Have a task that takes too long?</h2>
+  <section id="contact" class="contact" data-reveal>
+    <h2>Have a task that takes <span class="scribble ring"><em class="wonk">too long?</em><svg viewBox="0 0 200 60" preserveAspectRatio="none" aria-hidden="true"><path pathLength="1" vector-effect="non-scaling-stroke" d="M24 12C64 2 150 1 186 14c16 7 12 26-12 34-40 12-118 12-152 0C2 41 2 24 16 15 30 7 60 5 92 5"/></svg></span></h2>
     <p>Tell me what you do by hand every week. I'll reply with how I'd automate it and a price.</p>
-    <a class="btn" href="https://github.com/nkzwsn">Contact me on GitHub</a>
+    <a class="btn" href="https://github.com/nkzwsn">Contact me on GitHub <span class="arr" aria-hidden="true">&rarr;</span></a>
   </section>
 
-  <footer>&copy; 2026 nkzwsn</footer>
+  <footer>&copy; 2026 nkzwsn. Drawn and built by hand.</footer>
 </div>
 <script>
   // Redraw the logo on hover (once the previous drawing has finished).
@@ -321,6 +448,74 @@ Yogyakarta . SMA/SMK . deadline 20 Nov
       var fresh = g.cloneNode(true);
       g.parentNode.replaceChild(fresh, g); g = fresh;
     });
+  })();
+
+  var reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+
+  // Reveal sections as they scroll into view.
+  (function () {
+    var els = document.querySelectorAll('[data-reveal]');
+    if (!('IntersectionObserver' in window)) { els.forEach(function (e) { e.classList.add('in'); }); return; }
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (en) {
+        if (!en.isIntersecting) return;
+        en.target.classList.add('in');
+        io.unobserve(en.target);
+        en.target.querySelectorAll('[data-count]').forEach(countUp);
+      });
+    }, { rootMargin: '0px 0px -8% 0px', threshold: .12 });
+    els.forEach(function (e) { io.observe(e); });
+  })();
+
+  // Count the Mini Island numbers up from zero (45 MB counts down from 130, like the real change).
+  function countUp(el) {
+    var target = +el.dataset.count, pre = el.dataset.prefix || '', suf = el.dataset.suffix || '';
+    if (reducedMotion.matches || target === 0) return;
+    var from = target === 45 ? 130 : 0, t0 = performance.now(), dur = 1300;
+    (function tick(now) {
+      var p = Math.min((now - t0) / dur, 1), e = 1 - Math.pow(1 - p, 3);
+      el.textContent = pre + Math.round(from + (target - from) * e) + suf;
+      if (p < 1) requestAnimationFrame(tick);
+    })(t0);
+  }
+
+  // Mini Island: morph between the things it shows.
+  (function () {
+    var island = document.getElementById('island');
+    var states = Array.prototype.slice.call(island.querySelectorAll('.state'));
+    var dots = document.querySelectorAll('.stage .dots i');
+    var i = 0, timer = null, hovering = false, visible = false;
+    function fit() {
+      var s = states[i];
+      island.style.width = s.offsetWidth + 'px';
+      island.style.height = s.offsetHeight + 'px';
+      island.style.setProperty('--glow', s.dataset.glow);
+    }
+    function show(n) {
+      states[i].classList.remove('on'); dots[i].classList.remove('on');
+      i = (n + states.length) % states.length;
+      void states[i].offsetWidth; // restart this state's animations
+      states[i].classList.add('on'); dots[i].classList.add('on');
+      fit();
+    }
+    function schedule() {
+      clearTimeout(timer);
+      if (reducedMotion.matches) return;
+      timer = setTimeout(function () {
+        if (!hovering && visible && !document.hidden) show(i + 1);
+        schedule();
+      }, 3400);
+    }
+    island.addEventListener('click', function () { show(i + 1); schedule(); });
+    island.addEventListener('mouseenter', function () { hovering = true; });
+    island.addEventListener('mouseleave', function () { hovering = false; });
+    if ('IntersectionObserver' in window) {
+      new IntersectionObserver(function (en) { visible = en[0].isIntersecting; }).observe(island);
+    } else { visible = true; }
+    (document.fonts ? document.fonts.ready : Promise.resolve()).then(fit);
+    window.addEventListener('resize', fit);
+    fit();
+    schedule();
   })();
 </script>
 <script>
