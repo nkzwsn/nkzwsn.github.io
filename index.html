@@ -1,0 +1,264 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>nkzwsn · Automation and small tools</title>
+  <meta name="description" content="I build automations, internal tools and AI features that save small businesses hours every week.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #fbfaf8; --card: #ffffff; --ink: #16130f; --muted: #6f6659; --line: #ebe5dc;
+      --accent: #c2410c; --accent-soft: #fff1e8; --pill: #0b0b0c;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root:not([data-theme="light"]) {
+        --bg: #12100d; --card: #1b1814; --ink: #f3eee7; --muted: #a59a8c; --line: #2c2620;
+        --accent: #fb923c; --accent-soft: #2a1a0f;
+      }
+    }
+    :root[data-theme="dark"] {
+      --bg: #12100d; --card: #1b1814; --ink: #f3eee7; --muted: #a59a8c; --line: #2c2620;
+      --accent: #fb923c; --accent-soft: #2a1a0f;
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body { margin: 0; background: var(--bg); color: var(--ink);
+           font: 16px/1.6 Inter, "Segoe UI", system-ui, sans-serif; }
+    a { color: var(--accent); }
+    .wrap { max-width: 1040px; margin: 0 auto; padding: 0 16px; }
+    nav.top { display: flex; justify-content: space-between; align-items: center; padding: 18px 0; }
+    nav.top b { font-weight: 800; letter-spacing: -.02em; }
+    nav.top div { display: flex; gap: 18px; font-size: 14px; }
+    nav.top div a { color: var(--muted); text-decoration: none; }
+    nav.top div a:hover { color: var(--ink); }
+
+    .hero { padding: 64px 0 56px; }
+    .hero .tag { display: inline-block; background: var(--accent-soft); color: var(--accent);
+                 font-size: 13px; font-weight: 600; padding: 4px 12px; border-radius: 99px; }
+    .hero h1 { font-size: clamp(32px, 6vw, 54px); line-height: 1.08; letter-spacing: -.035em;
+               margin: 18px 0 18px; max-width: 820px; }
+    .hero p { font-size: 18px; color: var(--muted); max-width: 640px; margin: 0 0 28px; }
+    .cta { display: flex; gap: 10px; flex-wrap: wrap; }
+    .btn { display: inline-block; padding: 11px 20px; border-radius: 11px; font-weight: 600;
+           text-decoration: none; border: 1px solid var(--line); color: var(--ink); background: var(--card); }
+    .btn.primary { background: var(--ink); color: var(--bg); border-color: var(--ink); }
+
+    section { padding: 40px 0; }
+    h2 { font-size: 28px; letter-spacing: -.02em; margin: 0 0 6px; }
+    .sub { color: var(--muted); margin: 0 0 28px; }
+
+    .featured { display: grid; grid-template-columns: 1.1fr 1fr; gap: 0; background: var(--card);
+                border: 1px solid var(--line); border-radius: 20px; overflow: hidden; margin-bottom: 20px; }
+    .featured .stage { background: radial-gradient(120% 90% at 50% 0%, #3b2a5e 0%, #161320 55%, #0d0c12 100%);
+                       display: flex; flex-direction: column; align-items: center; justify-content: center;
+                       gap: 18px; padding: 48px 20px; min-height: 320px; }
+    .island { background: var(--pill); color: #fff; border-radius: 999px; display: flex; align-items: center;
+              gap: 12px; padding: 8px 18px 8px 8px; box-shadow: 0 0 40px rgba(236, 114, 160, .35);
+              max-width: 100%; }
+    .island .cover { width: 34px; height: 34px; border-radius: 50%; flex: none;
+                     background: conic-gradient(from 200deg, #f472b6, #fb923c, #a78bfa, #f472b6); }
+    .island .t { font-size: 13px; line-height: 1.25; min-width: 0; }
+    .island .t b { display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .island .t span { color: #f9a8d4; }
+    .island .t span i { color: #8b8794; font-style: normal; }
+    .eq { display: flex; gap: 3px; align-items: flex-end; height: 16px; flex: none; }
+    .eq u { width: 3px; background: #f472b6; border-radius: 2px; animation: eq 1s infinite ease-in-out; }
+    .eq u:nth-child(2) { animation-delay: -.3s; } .eq u:nth-child(3) { animation-delay: -.6s; }
+    @keyframes eq { 0%, 100% { height: 4px; } 50% { height: 16px; } }
+    @media (prefers-reduced-motion: reduce) { .eq u { animation: none; height: 10px; } }
+    .island.note { padding: 8px 16px 8px 8px; box-shadow: 0 0 30px rgba(88, 101, 242, .35); }
+    .island.note .cover { background: #5865f2; display: grid; place-items: center; font-size: 15px; font-weight: 700; }
+    .stage small { color: #8b8794; font-size: 12px; }
+    .featured .info { padding: 32px; }
+    .featured h3 { font-size: 24px; margin: 0 0 4px; letter-spacing: -.02em; }
+    .chips { display: flex; flex-wrap: wrap; gap: 6px; margin: 12px 0 16px; }
+    .chips span { font-size: 12px; font-weight: 600; padding: 3px 10px; border-radius: 99px;
+                  background: var(--bg); border: 1px solid var(--line); color: var(--muted); }
+    .featured ul { padding-left: 18px; margin: 0 0 18px; }
+    .featured li { margin-bottom: 6px; }
+    .stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; border-top: 1px solid var(--line); padding-top: 16px; margin-bottom: 16px; }
+    .stats div b { display: block; font-size: 22px; letter-spacing: -.02em; }
+    .stats div span { font-size: 13px; color: var(--muted); }
+
+    .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; }
+    .card { background: var(--card); border: 1px solid var(--line); border-radius: 18px; overflow: hidden;
+            display: flex; flex-direction: column; }
+    .card img { width: 100%; aspect-ratio: 16 / 10; object-fit: cover; object-position: top;
+                border-bottom: 1px solid var(--line); display: block; }
+    .card .terminal { aspect-ratio: 16 / 10; background: #0f1115; color: #d1d5db; padding: 18px;
+                      font: 12px/1.6 Consolas, "Cascadia Mono", monospace; overflow: hidden; white-space: pre; }
+    .terminal .ok { color: #4ade80; } .terminal .rv { color: #f87171; } .terminal .dim { color: #6b7280; }
+    .card .body { padding: 20px 22px 22px; flex: 1; display: flex; flex-direction: column; }
+    .card h3 { margin: 0 0 4px; font-size: 19px; }
+    .card p { margin: 0 0 12px; color: var(--muted); font-size: 15px; }
+    .card .chips { margin: 0 0 14px; }
+    .card .links { margin-top: auto; font-size: 14px; font-weight: 600; }
+
+    .services { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; }
+    .svc { border: 1px solid var(--line); border-radius: 16px; padding: 20px; background: var(--card); }
+    .svc b { display: block; margin-bottom: 6px; }
+    .svc p { margin: 0; color: var(--muted); font-size: 15px; }
+
+    .steps { counter-reset: s; display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; }
+    .steps div { counter-increment: s; padding-top: 8px; }
+    .steps div::before { content: counter(s); display: inline-grid; place-items: center; width: 28px; height: 28px;
+                         border-radius: 50%; background: var(--accent-soft); color: var(--accent);
+                         font-weight: 700; font-size: 14px; margin-bottom: 8px; }
+    .steps b { display: block; }
+    .steps p { margin: 4px 0 0; color: var(--muted); font-size: 15px; }
+
+    .contact { background: var(--ink); color: var(--bg); border-radius: 22px; padding: 44px 32px; text-align: center; margin: 40px 0 60px; }
+    .contact h2 { color: var(--bg); }
+    .contact p { color: color-mix(in srgb, var(--bg) 70%, transparent); max-width: 520px; margin: 0 auto 22px; }
+    .contact .btn { background: var(--bg); color: var(--ink); border-color: var(--bg); }
+    footer { color: var(--muted); font-size: 13px; text-align: center; padding-bottom: 40px; }
+
+    @media (max-width: 760px) {
+      .featured { grid-template-columns: 1fr; }
+      .featured .info { padding: 24px 20px; }
+      nav.top div a:not(:last-child) { display: none; }
+      .hero { padding: 40px 0 32px; }
+    }
+  </style>
+</head>
+<body>
+<div class="wrap">
+  <nav class="top">
+    <b>nkzwsn</b>
+    <div><a href="#work">Work</a><a href="#services">Services</a><a href="#contact">Contact</a></div>
+  </nav>
+
+  <header class="hero">
+    <span class="tag">Available for freelance projects</span>
+    <h1>I build automations and small tools that give businesses their hours back.</h1>
+    <p>Spreadsheets that fill themselves, order and invoice workflows, Windows apps, bots and AI
+       features, built fast and handed over with clear docs. Based in Indonesia, working with clients anywhere.</p>
+    <div class="cta">
+      <a class="btn primary" href="#contact">Start a project</a>
+      <a class="btn" href="#work">See my work</a>
+    </div>
+  </header>
+
+  <section id="work">
+    <h2>Work</h2>
+    <p class="sub">A shipped product with real users, plus demos of the kind of work I do for clients.</p>
+
+    <article class="featured">
+      <div class="stage" aria-label="Illustration of the Mini Island pill">
+        <div class="island">
+          <div class="cover"></div>
+          <div class="t"><b>Mini Island</b><span>yume no naka e <i>(夢の中へ)</i></span></div>
+          <div class="eq"><u></u><u></u><u></u></div>
+        </div>
+        <div class="island note">
+          <div class="cover">D</div>
+          <div class="t"><b>Discord</b><span style="color:#c7c9ff">Raka: meeting moved to 3 pm</span></div>
+        </div>
+        <small>Illustration: now playing with synced lyrics, and a notification</small>
+      </div>
+      <div class="info">
+        <h3>Mini Island for Windows</h3>
+        <div class="chips"><span>PowerShell</span><span>WPF</span><span>Win32 / WinRT APIs</span><span>Open source</span></div>
+        <p>A "dynamic island" for Windows 10 and 11: a small pill at the top of the screen that shows
+           notifications and what's playing, instead of the toasts in the corner.</p>
+        <ul>
+          <li>Now Playing for Spotify, YouTube, Apple Music, with synced lyrics, furigana and romaji for Japanese songs</li>
+          <li>Picks the app you can actually hear, so muted autoplay videos don't take over</li>
+          <li>Self-updating: users get a one-click update with release notes</li>
+          <li>English and Indonesian interface, multi-monitor, steps aside for fullscreen games</li>
+        </ul>
+        <div class="stats">
+          <div><b>&lt;1%</b><span>CPU when idle</span></div>
+          <div><b>45 MB</b><span>memory (down from 130)</span></div>
+          <div><b>0</b><span>dependencies to install</span></div>
+        </div>
+        <a href="https://github.com/nkzwsn/mini-island-windows">View on GitHub</a>
+      </div>
+    </article>
+
+    <div class="grid">
+      <article class="card">
+        <img src="img/order-desk-dashboard.jpg" alt="Order Desk dashboard with revenue chart and order board" loading="lazy">
+        <div class="body">
+          <h3>Order Desk</h3>
+          <p>Order tracker for a shop that sells over WhatsApp: order board, revenue dashboard,
+             one-click WhatsApp messages for each step, and Excel export.</p>
+          <div class="chips"><span>Python</span><span>Flask</span><span>SQLite</span><span>WhatsApp links</span></div>
+          <div class="links">Demo project</div>
+        </div>
+      </article>
+
+      <article class="card">
+<div class="terminal"><span class="dim">&gt; python extract.py invoices/</span>
+<span class="ok">[ok    ]</span> acme-cloud-oct.pdf   total=83.00
+<span class="ok">[ok    ]</span> cahaya-printing.pdf  total=1.221.000
+<span class="ok">[ok    ]</span> pixelworks-1093.pdf  total=664.90
+<span class="rv">[REVIEW]</span> sumber-rejeki.pdf    total=2.000.000
+         <span class="rv">- subtotal + tax = 1.722.000,</span>
+         <span class="rv">  but total says 2.000.000</span>
+
+4 invoices -&gt; invoices.xlsx  (1 needs review)</div>
+        <div class="body">
+          <h3>Invoice Extractor</h3>
+          <p>Turns a folder of supplier invoices into one Excel file and catches math errors,
+             so a person only checks the invoices that need it. Uses Claude for any layout or scan.</p>
+          <div class="chips"><span>Python</span><span>Claude API</span><span>Excel</span><span>PDF</span></div>
+          <div class="links">Demo project</div>
+        </div>
+      </article>
+
+      <article class="card">
+<div class="terminal"><span class="dim">#loker-baru</span>
+
+<span class="ok">Hitagi</span>  <span class="dim">BOT  today at 09:00</span>
+Staff Admin Gudang, PT Sinar Jaya
+Yogyakarta . SMA/SMK . deadline 20 Nov
+
+<span class="dim">&gt; /loker pendidikan:S1 lokasi:solo</span>
+10 openings in Jawa Tengah for S1 ...</div>
+        <div class="body">
+          <h3>Job Alert Bot</h3>
+          <p>Discord bot that checks two job sites every hour, removes duplicates and posts new
+             openings, with slash-command search by education, field and city.</p>
+          <div class="chips"><span>Python</span><span>Discord</span><span>Web scraping</span></div>
+          <div class="links">Personal project</div>
+        </div>
+      </article>
+    </div>
+  </section>
+
+  <section id="services">
+    <h2>What I can build for you</h2>
+    <p class="sub">Fixed price per project, agreed before I start.</p>
+    <div class="services">
+      <div class="svc"><b>Business automation</b><p>Orders, invoices, reports and reminders that run by themselves across Sheets, email and WhatsApp.</p></div>
+      <div class="svc"><b>Internal tools</b><p>Dashboards, trackers and admin panels to replace the spreadsheet everyone is afraid to touch.</p></div>
+      <div class="svc"><b>AI features</b><p>Reading documents, sorting messages, answering questions from your own data, added to the tools you already use.</p></div>
+      <div class="svc"><b>Fix and finish</b><p>Taking over a half-done or broken project, finding what's wrong and getting it shipped.</p></div>
+    </div>
+  </section>
+
+  <section>
+    <h2>How it works</h2>
+    <p class="sub">Short, clear, no surprises.</p>
+    <div class="steps">
+      <div><b>Quick call or chat</b><p>You show me the task that eats your time. I tell you honestly if it's worth automating.</p></div>
+      <div><b>Fixed quote</b><p>One price, one scope, one delivery date.</p></div>
+      <div><b>Working demo early</b><p>You see it running within days and can change direction before it's finished.</p></div>
+      <div><b>Handover</b><p>Code, setup guide and a short video, so it keeps running after I'm done.</p></div>
+    </div>
+  </section>
+
+  <section id="contact" class="contact">
+    <h2>Have a task that takes too long?</h2>
+    <p>Tell me what you do by hand every week. I'll reply with how I'd automate it and a price.</p>
+    <a class="btn" href="https://github.com/nkzwsn">Contact me on GitHub</a>
+  </section>
+
+  <footer>&copy; 2026 nkzwsn</footer>
+</div>
+</body>
+</html>
