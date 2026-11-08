@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Invoice Extractor demo</title>
+  <meta name="description" content="Live demo: turn invoice PDFs into a checked Excel file, right in your browser.">
+  <script>
+    try { var t = localStorage.getItem('theme'); if (t) document.documentElement.dataset.theme = t; } catch (e) {}
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root { --bg: #fbfaf8; --card: #fff; --ink: #16130f; --muted: #6f6659; --line: #ebe5dc;
+            --accent: #c2410c; --accent-soft: #fff1e8; --ok: #15803d; --ok-soft: #e3f4e8; --bad: #b91c1c; --bad-soft: #fde2e1; }
+    @media (prefers-color-scheme: dark) {
+      :root:not([data-theme="light"]) { --bg: #12100d; --card: #1b1814; --ink: #f3eee7; --muted: #a59a8c; --line: #2c2620;
+        --accent: #fb923c; --accent-soft: #2a1a0f; --ok: #4ade80; --ok-soft: #0f2a1a; --bad: #f87171; --bad-soft: #2d1414; }
+    }
+    :root[data-theme="dark"] { --bg: #12100d; --card: #1b1814; --ink: #f3eee7; --muted: #a59a8c; --line: #2c2620;
+      --accent: #fb923c; --accent-soft: #2a1a0f; --ok: #4ade80; --ok-soft: #0f2a1a; --bad: #f87171; --bad-soft: #2d1414; }
+    * { box-sizing: border-box; }
+    body { margin: 0; background: var(--bg); color: var(--ink); font: 15px/1.55 Inter, "Segoe UI", system-ui, sans-serif; }
+    a { color: var(--accent); }
+    .bar { background: var(--accent); color: #fff; font-size: 13px; padding: 7px 16px; text-align: center; }
+    .bar a { color: inherit; font-weight: 700; margin-left: 10px; }
+    .wrap { max-width: 1040px; margin: 0 auto; padding: 32px 16px 60px; }
+    h1 { font-size: clamp(26px, 5vw, 36px); letter-spacing: -.03em; margin: 0 0 8px; line-height: 1.15; }
+    .lead { color: var(--muted); max-width: 640px; margin: 0 0 24px; font-size: 16px; }
+    .drop { border: 2px dashed var(--line); border-radius: 18px; background: var(--card); padding: 32px 20px;
+            text-align: center; transition: border-color .2s ease, background .2s ease; }
+    .drop.over { border-color: var(--accent); background: var(--accent-soft); }
+    .drop p { margin: 0 0 16px; color: var(--muted); }
+    .btns { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
+    .btn { display: inline-block; padding: 10px 18px; border-radius: 11px; font: inherit; font-weight: 600; cursor: pointer;
+           border: 1px solid var(--line); background: var(--card); color: var(--ink); text-decoration: none;
+           transition: transform .15s ease, filter .15s ease; }
+    .btn:hover { filter: brightness(1.05); } .btn:active { transform: scale(.97); }
+    .btn.primary { background: var(--ink); color: var(--bg); border-color: var(--ink); }
+    .btn[disabled] { opacity: .5; cursor: default; }
+    .fine { font-size: 13px; color: var(--muted); margin-top: 14px; }
+    .fine a { color: inherit; }
+    .summary { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; margin: 28px 0 12px; }
+    .summary b { font-size: 18px; }
+    .card { background: var(--card); border: 1px solid var(--line); border-radius: 16px; overflow: hidden; }
+    table { width: 100%; border-collapse: collapse; }
+    th { text-align: left; font-size: 12px; font-weight: 600; color: var(--muted); padding: 10px 14px; border-bottom: 1px solid var(--line); }
+    td { padding: 11px 14px; border-bottom: 1px solid var(--line); vertical-align: top; }
+    tr.inv { cursor: pointer; } tr.inv:hover td { background: var(--bg); }
+    .num { text-align: right; white-space: nowrap; font-variant-numeric: tabular-nums; }
+    .pill { font-size: 12px; font-weight: 700; padding: 2px 10px; border-radius: 99px; white-space: nowrap; }
+    .pill.ok { background: var(--ok-soft); color: var(--ok); } .pill.bad { background: var(--bad-soft); color: var(--bad); }
+    .issues { color: var(--bad); font-size: 13px; margin-top: 4px; }
+    .muted { color: var(--muted); font-size: 13px; }
+    tr.items td { background: var(--bg); padding: 0 14px 12px 34px; }
+    tr.items table td { border: 0; padding: 4px 8px; font-size: 14px; background: transparent; }
+    tr.items[hidden] { display: none; }
+    .scroll { overflow-x: auto; }
+    .scroll table { min-width: 680px; }
+    .how { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-top: 40px; }
+    @media (max-width: 900px) { .how { grid-template-columns: repeat(2, 1fr); } }
+    @media (max-width: 520px) { .how { grid-template-columns: 1fr; } }
+    td.nw { white-space: nowrap; }
+    .how div { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 16px 18px; }
+    .how b { display: block; margin-bottom: 4px; } .how p { margin: 0; color: var(--muted); font-size: 14px; }
+    #results { animation: fade .3s ease; }
+    @keyframes fade { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+    @media (prefers-reduced-motion: reduce) { #results { animation: none; } }
+  </style>
+</head>
+<body>
+  <div class="bar">Live demo: your PDFs are read inside your browser and never uploaded. <a href="../../#work">Back to portfolio</a></div>
+  <div class="wrap">
+    <h1>Invoice Extractor</h1>
+    <p class="lead">Turn a pile of supplier invoices into one clean Excel file. Every invoice is checked,
+      so you only look at the ones with a problem.</p>
+
+    <div class="drop" id="drop">
+      <p>Drop invoice PDFs here, or</p>
+      <div class="btns">
+        <button class="btn primary" id="samples" type="button">Try 4 sample invoices</button>
+        <label class="btn" for="file">Choose your own PDFs</label>
+        <input type="file" id="file" accept="application/pdf" multiple hidden>
+      </div>
+      <p class="fine">The samples: <span id="sample-links"></span>. One has a wrong total on purpose.</p>
+    </div>
+
+    <div id="results" hidden></div>
+
+    <div class="how">
+      <div><b>Reads each invoice</b><p>Vendor, number, dates, customer, currency, line items and totals. Indonesian (Rp, PPN, day-first dates) and English invoices.</p></div>
+      <div><b>Checks the math</b><p>Quantity x price on every line, lines vs subtotal, subtotal + tax vs total. Anything off gets flagged with the reason.</p></div>
+      <div><b>Gives you Excel</b><p>Invoices, line items and a per-vendor summary, ready for your bookkeeping.</p></div>
+      <div><b>Full version</b><p>This demo reads text PDFs with common layouts. The full version uses Claude AI to read any layout, scans and photos too.</p></div>
+    </div>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js" defer></script>
+  <script src="extract.js"></script>
+</body>
+</html>

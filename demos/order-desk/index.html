@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Order Desk demo</title>
+  <meta name="description" content="Live demo of Order Desk, an order tracker for shops that sell over WhatsApp.">
+  <script>
+    try { var t = localStorage.getItem('theme'); if (t) document.documentElement.dataset.theme = t; } catch (e) {}
+  </script>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="demo-bar">
+    <span>Live demo: try anything, the data stays in your browser.</span>
+    <button type="button" id="reset">Reset demo data</button>
+    <a href="../../#work">Back to portfolio</a>
+  </div>
+  <header class="top">
+    <a class="brand" href="#/"><span class="logo">OD</span> Order Desk <small>Toko Kopi Senja</small></a>
+    <nav>
+      <a href="#/" data-nav="dashboard">Dashboard</a>
+      <a href="#/orders" data-nav="orders">Orders</a>
+      <a href="#" id="export">Export Excel</a>
+      <a href="#/new" class="btn primary">+ New order</a>
+    </nav>
+  </header>
+  <main id="app"></main>
+  <div class="toast hide" id="toast" role="status" aria-live="polite"></div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js" defer></script>
+  <script src="app.js" defer></script>
+</body>
+</html>
